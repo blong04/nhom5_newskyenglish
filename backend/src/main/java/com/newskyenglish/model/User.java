@@ -21,20 +21,16 @@ public class User {
     @Column(name = "userid")
     private Long id;
 
-    @NotBlank(message = "Họ tên không được để trống")
-    @Size(min = 2, max = 100, message = "Họ tên phải từ 2-100 ký tự")
-    @Column(name = "HoTen", nullable = false, length = 100)
+    @Column(name = "HoTen", length = 100)
     private String name;
 
-    @NotBlank(message = "Email không được để trống")
     @Email(message = "Email không hợp lệ")
-    @Column(name = "Email", nullable = false, unique = true, length = 100)
+    @Column(name = "Email", unique = true, length = 100)
     private String email;
 
     @Column(name = "MatKhau", length = 255)
     private String password;
 
-    @Size(max = 15)
     @Column(name = "SoDienThoai", length = 15)
     private String phoneNumber;
 
@@ -47,17 +43,20 @@ public class User {
     @Column(name = "AnhDaiDien", length = 255)
     private String avatarUrl;
 
+    @Column(name = "NgayTao", updatable = false)
+    private LocalDateTime createdAt;
+
+    @Column(name = "NgayCapNhat")
+    private LocalDateTime updatedAt;
+
     @Column(name = "Duyet")
     @Builder.Default
     private Boolean approved = true;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "TrangThai", nullable = false)
+    @Column(name = "TrangThai")
     @Builder.Default
     private Status status = Status.active;
-
-    @Column(name = "IELTSScore")
-    private Double ieltsScore;
 
     @Column(name = "TOEICScore")
     private Integer toeicScore;
@@ -74,13 +73,8 @@ public class User {
     @Column(name = "HocVan", length = 255)
     private String education;
 
-    @CreationTimestamp
-    @Column(name = "NgayTao", updatable = false)
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    @Column(name = "NgayCapNhat")
-    private LocalDateTime updatedAt;
+    @Column(name = "IELTSScore")
+    private Double ieltsScore;
 
     public enum Status {
         active, inactive, suspended
