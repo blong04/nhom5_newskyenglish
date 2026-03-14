@@ -43,7 +43,6 @@ export default function UsersPage() {
           <div className="logo-circle">N</div>
           <div>
             <h1>NewSky English</h1>
-            <p>Quản lý người dùng</p>
           </div>
         </div>
         <a
