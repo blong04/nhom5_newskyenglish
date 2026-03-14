@@ -4,9 +4,8 @@ import UserModal from "../components/UserModal";
 import { Toaster } from "react-hot-toast";
 import "./UsersPage.css";
 
-const ROLE_LABEL = { ADMIN: "Admin", TEACHER: "Giáo viên", STUDENT: "Học viên" };
-const STATUS_LABEL = { ACTIVE: "Hoạt động", INACTIVE: "Không HĐ", BANNED: "Bị khóa" };
-const STATUS_CLASS = { ACTIVE: "badge-active", INACTIVE: "badge-inactive", BANNED: "badge-banned" };
+const STATUS_LABEL = { active: "Hoạt động", inactive: "Không HĐ", suspended: "Bị khóa" };
+const STATUS_CLASS = { active: "badge-active", inactive: "badge-inactive", suspended: "badge-banned" };
 
 export default function UsersPage() {
   const { users, loading, error, fetchUsers, createUser, updateUser, deleteUser } = useUsers();
@@ -119,8 +118,8 @@ export default function UsersPage() {
                       <td>{user.email}</td>
                       <td>{user.phoneNumber || "—"}</td>
                       <td>
-                        <span className={`role-badge role-${user.role?.toLowerCase()}`}>
-                          {ROLE_LABEL[user.role]}
+                        <span className={`role-badge role-${user.roleId}`}>
+                          {user.roleName}
                         </span>
                       </td>
                       <td>
