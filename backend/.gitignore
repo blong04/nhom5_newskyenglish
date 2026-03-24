@@ -1,1 +1,19 @@
 src/main/resources/application.properties
+# Build
+target/
+build/
+
+# Java
+*.class
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
