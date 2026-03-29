@@ -23,9 +23,6 @@ public class Course {
     @Column(name = "MoTa", columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "GiaoVienID")
-    private Integer teacherId;
-
     @Column(name = "Gia", precision = 10, scale = 2)
     private BigDecimal price;
 

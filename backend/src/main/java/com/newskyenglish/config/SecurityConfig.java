@@ -26,45 +26,63 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                // Public
+
+                // ── Public ──────────────────────────────────────────
                 .requestMatchers("/auth/**").permitAll()
 
-                // GET chung — ai đã login đều xem được
-                .requestMatchers(HttpMethod.GET,
-                    "/courses/**", "/classes/**", "/lessons/**",
-                    "/modules/**", "/quizzes/**", "/assignments/**",
-                    "/schedules/**", "/enrollments/**",
-                    "/notifications/**"
-                ).authenticated()
+                // ── GET — mọi role đã login đều đọc được ────────────
+                .requestMatchers(HttpMethod.GET, "/courses/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/classes/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/modules/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/lessons/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/quizzes/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/assignments/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/schedules/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/enrollments/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/notifications/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/submissions/**").authenticated()
 
-                // Admin only
-                .requestMatchers("/admin/**").hasRole("ADMIN")
-                .requestMatchers("/users/**").hasRole("ADMIN")
+                // ── /users GET — Admin + Teacher đọc được ───────────
+                // (Teacher cần đọc danh sách user để hiển thị học viên)
+                .requestMatchers(HttpMethod.GET, "/users/**").hasAnyRole("ADMIN", "TEACHER")
 
-                // Teacher + Admin
-                .requestMatchers(HttpMethod.POST, "/assignments/**").hasAnyRole("ADMIN", "TEACHER")
-                .requestMatchers(HttpMethod.PUT,  "/assignments/**").hasAnyRole("ADMIN", "TEACHER")
-                .requestMatchers(HttpMethod.DELETE, "/assignments/**").hasAnyRole("ADMIN", "TEACHER")
-                .requestMatchers("/teacher/**").hasAnyRole("ADMIN", "TEACHER")
+                // ── /admin/** GET — Admin + Teacher đọc được ────────
+                // (Teacher cần /admin/classes để load lớp của mình)
+                .requestMatchers(HttpMethod.GET, "/admin/**").hasAnyRole("ADMIN", "TEACHER")
 
-                // Quiz — admin tạo, teacher chỉ xem
-                .requestMatchers(HttpMethod.POST, "/quizzes/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.PUT,  "/quizzes/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/quizzes/**").hasRole("ADMIN")
+                // ── /admin/** POST/PUT/DELETE — chỉ Admin ────────────
+                .requestMatchers(HttpMethod.POST,   "/admin/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT,    "/admin/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/admin/**").hasRole("ADMIN")
 
-                // Course, Class — admin quản lý
-                .requestMatchers(HttpMethod.POST, "/courses/**", "/classes/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.PUT,  "/courses/**", "/classes/**").hasRole("ADMIN")
+                // ── /users CRUD — chỉ Admin ──────────────────────────
+                .requestMatchers(HttpMethod.POST,   "/users/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/users/**").hasRole("ADMIN")
+
+                // ── /users PUT — Admin + chính user đó ──────────────
+                // (Student/Teacher tự update profile của mình)
+                .requestMatchers(HttpMethod.PUT, "/users/**").authenticated()
+
+                // ── Courses/Classes CRUD — chỉ Admin ─────────────────
+                .requestMatchers(HttpMethod.POST,   "/courses/**", "/classes/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT,    "/courses/**", "/classes/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/courses/**", "/classes/**").hasRole("ADMIN")
 
-                // Student
+                // ── Quiz — Admin tạo/sửa/xóa ─────────────────────────
+                .requestMatchers(HttpMethod.POST,   "/quizzes/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT,    "/quizzes/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/quizzes/**").hasRole("ADMIN")
+
+                // ── Assignment — Teacher + Admin ──────────────────────
+                .requestMatchers(HttpMethod.POST,   "/assignments/**").hasAnyRole("ADMIN", "TEACHER")
+                .requestMatchers(HttpMethod.PUT,    "/assignments/**").hasAnyRole("ADMIN", "TEACHER")
+                .requestMatchers(HttpMethod.DELETE, "/assignments/**").hasAnyRole("ADMIN", "TEACHER")
+
+                // ── Teacher routes ────────────────────────────────────
+                .requestMatchers("/teacher/**").hasAnyRole("ADMIN", "TEACHER")
+
+                // ── Student + Enrollment ──────────────────────────────
                 .requestMatchers("/student/**").authenticated()
-
-                // Notification — ai cũng gửi/nhận được (có lọc trong service)
-                .requestMatchers(HttpMethod.POST, "/notifications/**").authenticated()
-                .requestMatchers(HttpMethod.PUT,  "/notifications/**").authenticated()
-
-                // Enrollments — student đăng ký, admin duyệt
                 .requestMatchers(HttpMethod.POST, "/enrollments/**").authenticated()
                 .requestMatchers(HttpMethod.PUT,  "/enrollments/**").authenticated()
 

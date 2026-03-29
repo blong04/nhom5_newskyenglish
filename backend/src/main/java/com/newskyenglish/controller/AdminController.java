@@ -56,7 +56,31 @@ public class AdminController {
     /** Lấy tất cả lớp học */
     @GetMapping("/admin/classes")
     public ResponseEntity<?> getAllClasses() {
-        return ResponseEntity.ok(ApiResponse.success(classRepo.findAll()));
+    List<ClassRoom> classes = classRepo.findAll();
+    List<Map<String, Object>> result = classes.stream().map(c -> {
+        Map<String, Object> map = new java.util.HashMap<>();
+        map.put("id",              c.getId());
+        map.put("courseId",        c.getCourseId());
+        map.put("teacherId",       c.getTeacherId());
+        map.put("name",            c.getName());
+        map.put("description",     c.getDescription());
+        map.put("maxStudents",     c.getMaxStudents());
+        map.put("currentStudents", c.getCurrentStudents());
+        map.put("startDate",       c.getStartDate());
+        map.put("endDate",         c.getEndDate());
+        map.put("status",          c.getStatus());
+        map.put("createdAt",       c.getCreatedAt());
+        // Thêm tên teacher
+        if (c.getTeacherId() != null) {
+            userRepo.findById(c.getTeacherId()).ifPresent(u ->
+                map.put("teacherName", u.getName())
+            );
+        } else {
+            map.put("teacherName", null);
+        }
+        return map;
+    }).collect(java.util.stream.Collectors.toList());
+    return ResponseEntity.ok(ApiResponse.success(result));
     }
 
     /** Tạo lớp học mới */
@@ -69,17 +93,18 @@ public class AdminController {
 
     /** Cập nhật lớp học */
     @PutMapping("/admin/classes/{id}")
-    public ResponseEntity<?> updateClass(@PathVariable Long id, @RequestBody ClassRoom req) {
+    public ResponseEntity<?> updateClass(
+            @PathVariable Long id,
+            @RequestBody ClassRoom req) {
         return classRepo.findById(id).map(c -> {
-            if (req.getCourseId()      != null) c.setCourseId(req.getCourseId());
-            if (req.getName()          != null) c.setName(req.getName());
-            if (req.getDescription()   != null) c.setDescription(req.getDescription());
-            if (req.getMaxStudents()   != null) c.setMaxStudents(req.getMaxStudents());
-            if (req.getStartDate()     != null) c.setStartDate(req.getStartDate());
-            if (req.getEndDate()       != null) c.setEndDate(req.getEndDate());
-            if (req.getStatus()        != null) c.setStatus(req.getStatus());
-            // Lưu teacherId vào course (vì ClassRoom chưa có field teacherId riêng)
-            // Nếu muốn lưu trực tiếp thì thêm @Column teacherId vào ClassRoom entity
+            if (req.getCourseId()     != null) c.setCourseId(req.getCourseId());
+            if (req.getTeacherId()    != null) c.setTeacherId(req.getTeacherId());
+            if (req.getName()         != null) c.setName(req.getName());
+            if (req.getDescription()  != null) c.setDescription(req.getDescription());
+            if (req.getMaxStudents()  != null) c.setMaxStudents(req.getMaxStudents());
+            if (req.getStartDate()    != null) c.setStartDate(req.getStartDate());
+            if (req.getEndDate()      != null) c.setEndDate(req.getEndDate());
+            if (req.getStatus()       != null) c.setStatus(req.getStatus());
             return ResponseEntity.ok(ApiResponse.success(classRepo.save(c), "Cập nhật thành công"));
         }).orElse(ResponseEntity.notFound().build());
     }
@@ -93,13 +118,12 @@ public class AdminController {
 
     /** Phân công giáo viên vào lớp */
     @PutMapping("/admin/classes/{classId}/assign-teacher/{teacherId}")
-    public ResponseEntity<?> assignTeacher(@PathVariable Long classId, @PathVariable Long teacherId) {
+    public ResponseEntity<?> assignTeacher(
+            @PathVariable Long classId,
+            @PathVariable Long teacherId) {
         return classRepo.findById(classId).map(c -> {
-            // Cập nhật teacherId vào course của class
-            courseRepo.findById(c.getCourseId()).ifPresent(course -> {
-                course.setTeacherId(teacherId.intValue());
-                courseRepo.save(course);
-            });
+            c.setTeacherId(teacherId);
+            classRepo.save(c);
             return ResponseEntity.ok(ApiResponse.success(null, "Phân công giáo viên thành công"));
         }).orElse(ResponseEntity.notFound().build());
     }

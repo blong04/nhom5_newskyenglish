@@ -17,6 +17,7 @@ public class QuizController {
     private final QuizRepository quizRepo;
     private final QuestionGroupRepository groupRepo;
     private final QuestionRepository questionRepo;
+    private final SubmissionRepository submissionRepo;
 
     // Lấy tất cả quiz
     @GetMapping
@@ -106,5 +107,18 @@ public class QuizController {
         private Integer timeLimit;
         private List<QuestionGroup> groups;
         private List<Question> questions;
+    }
+    @GetMapping("/{id}/submissions")
+    public ResponseEntity<?> getQuizSubmissions(@PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.success(
+            submissionRepo.findByQuizId(id)
+        ));
+    }
+
+    @GetMapping("/submissions/user/{userId}")
+    public ResponseEntity<?> getUserSubmissions(@PathVariable Long userId) {
+        return ResponseEntity.ok(ApiResponse.success(
+            submissionRepo.findByUserId(userId)
+        ));
     }
 }

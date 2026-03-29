@@ -1,8 +1,6 @@
 package com.newskyenglish.repository;
 
 import com.newskyenglish.model.ClassRoom;
-import com.newskyenglish.model.Enrollment;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;
@@ -11,5 +9,5 @@ import java.util.List;
 public interface ClassRoomRepository extends JpaRepository<ClassRoom, Long> {
     List<ClassRoom> findByCourseId(Long courseId);
     List<ClassRoom> findByStatus(ClassRoom.Status status);
-    List<Enrollment> findByClassId(Long classId);
+    List<ClassRoom> findByTeacherId(int teacherId);
 }

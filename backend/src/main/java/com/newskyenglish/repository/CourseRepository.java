@@ -9,5 +9,4 @@ import java.util.List;
 public interface CourseRepository extends JpaRepository<Course, Long> {
     List<Course> findByStatus(Course.Status status);
     List<Course> findByExamType(Course.ExamType examType);
-    List<Course> findByTeacherId(Integer teacherId);
 }
