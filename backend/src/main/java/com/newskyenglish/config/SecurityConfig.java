@@ -24,71 +24,64 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
-            .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .sessionManagement(s ->
+                s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
 
-                // ── Public ──────────────────────────────────────────
+                // ── Public ─────────────────────────────────────────
                 .requestMatchers("/auth/**").permitAll()
 
-                // ── GET — mọi role đã login đều đọc được ────────────
-                .requestMatchers(HttpMethod.GET, "/courses/**").authenticated()
-                .requestMatchers(HttpMethod.GET, "/classes/**").authenticated()
-                .requestMatchers(HttpMethod.GET, "/modules/**").authenticated()
-                .requestMatchers(HttpMethod.GET, "/lessons/**").authenticated()
-                .requestMatchers(HttpMethod.GET, "/quizzes/**").authenticated()
-                .requestMatchers(HttpMethod.GET, "/assignments/**").authenticated()
-                .requestMatchers(HttpMethod.GET, "/schedules/**").authenticated()
-                .requestMatchers(HttpMethod.GET, "/enrollments/**").authenticated()
-                .requestMatchers(HttpMethod.GET, "/notifications/**").authenticated()
-                .requestMatchers(HttpMethod.GET, "/submissions/**").authenticated()
+                // ── Tất cả đã login đều GET được ───────────────────
+                // Student cần GET /admin/classes để xem lớp
+                .requestMatchers(HttpMethod.GET, "/**").authenticated()
 
-                // ── /users GET — Admin + Teacher đọc được ───────────
-                // (Teacher cần đọc danh sách user để hiển thị học viên)
-                .requestMatchers(HttpMethod.GET, "/users/**").hasAnyRole("ADMIN", "TEACHER")
+                // ── Admin only: POST/PUT/DELETE toàn bộ ────────────
+                .requestMatchers(HttpMethod.POST,
+                    "/admin/**", "/users/**",
+                    "/courses/**", "/classes/**",
+                    "/quizzes/**"
+                ).hasRole("ADMIN")
 
-                // ── /admin/** GET — Admin + Teacher đọc được ────────
-                // (Teacher cần /admin/classes để load lớp của mình)
-                .requestMatchers(HttpMethod.GET, "/admin/**").hasAnyRole("ADMIN", "TEACHER")
+                .requestMatchers(HttpMethod.PUT,
+                    "/admin/**", "/users/**",
+                    "/courses/**", "/classes/**",
+                    "/quizzes/**"
+                ).hasRole("ADMIN")
 
-                // ── /admin/** POST/PUT/DELETE — chỉ Admin ────────────
-                .requestMatchers(HttpMethod.POST,   "/admin/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.PUT,    "/admin/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/admin/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE,
+                    "/admin/**", "/users/**",
+                    "/courses/**", "/classes/**",
+                    "/quizzes/**"
+                ).hasRole("ADMIN")
 
-                // ── /users CRUD — chỉ Admin ──────────────────────────
-                .requestMatchers(HttpMethod.POST,   "/users/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/users/**").hasRole("ADMIN")
+                // ── Teacher: tạo/sửa/xóa assignments ──────────────
+                .requestMatchers(HttpMethod.POST,
+                    "/assignments/**", "/teacher/**"
+                ).hasAnyRole("ADMIN", "TEACHER")
 
-                // ── /users PUT — Admin + chính user đó ──────────────
-                // (Student/Teacher tự update profile của mình)
-                .requestMatchers(HttpMethod.PUT, "/users/**").authenticated()
+                .requestMatchers(HttpMethod.PUT,
+                    "/assignments/**", "/teacher/**"
+                ).hasAnyRole("ADMIN", "TEACHER")
 
-                // ── Courses/Classes CRUD — chỉ Admin ─────────────────
-                .requestMatchers(HttpMethod.POST,   "/courses/**", "/classes/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.PUT,    "/courses/**", "/classes/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/courses/**", "/classes/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE,
+                    "/assignments/**"
+                ).hasAnyRole("ADMIN", "TEACHER")
 
-                // ── Quiz — Admin tạo/sửa/xóa ─────────────────────────
-                .requestMatchers(HttpMethod.POST,   "/quizzes/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.PUT,    "/quizzes/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/quizzes/**").hasRole("ADMIN")
+                // ── Student: đăng ký, nộp bài, notifications ───────
+                .requestMatchers(HttpMethod.POST,
+                    "/student/**", "/enrollments/**",
+                    "/notifications/**"
+                ).authenticated()
 
-                // ── Assignment — Teacher + Admin ──────────────────────
-                .requestMatchers(HttpMethod.POST,   "/assignments/**").hasAnyRole("ADMIN", "TEACHER")
-                .requestMatchers(HttpMethod.PUT,    "/assignments/**").hasAnyRole("ADMIN", "TEACHER")
-                .requestMatchers(HttpMethod.DELETE, "/assignments/**").hasAnyRole("ADMIN", "TEACHER")
-
-                // ── Teacher routes ────────────────────────────────────
-                .requestMatchers("/teacher/**").hasAnyRole("ADMIN", "TEACHER")
-
-                // ── Student + Enrollment ──────────────────────────────
-                .requestMatchers("/student/**").authenticated()
-                .requestMatchers(HttpMethod.POST, "/enrollments/**").authenticated()
-                .requestMatchers(HttpMethod.PUT,  "/enrollments/**").authenticated()
+                .requestMatchers(HttpMethod.PUT,
+                    "/student/**", "/enrollments/**",
+                    "/notifications/**"
+                ).authenticated()
 
                 .anyRequest().authenticated()
             )
-            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(jwtFilter,
+                UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
