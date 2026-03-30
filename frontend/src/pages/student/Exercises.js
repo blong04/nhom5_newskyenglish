@@ -23,41 +23,44 @@ export default function StudentExercises() {
     setLoading(true);
     try {
       const [aRes, qRes, subRes, submitRes] = await Promise.all([
-        api.get("/assignments").catch(() => ({ data:{ data:[] } })),
-        api.get("/quizzes").catch(()    => ({ data:{ data:[] } })),
+        api.get("/assignments").catch(() => ({ data: { data: [] } })),
+        api.get("/quizzes").catch(()    => ({ data: { data: [] } })),
         api.get(`/quizzes/submissions/user/${user.id}`)
-           .catch(() => ({ data:{ data:[] } })),
+           .catch(() => ({ data: { data: [] } })),
         api.get(`/assignments/submit/user/${user.id}`)
-           .catch(() => ({ data:{ data:[] } })),
+           .catch(() => ({ data: { data: [] } })),
       ]);
 
-      const allAssigns  = aRes.data.data    || [];
-      const allQuizzes  = qRes.data.data    || [];
-      const myQuizSubs  = subRes.data.data  || [];
+      const allAssigns   = aRes.data.data    || [];
+      const allQuizzes   = qRes.data.data    || [];
+      const myQuizSubs   = subRes.data.data  || [];
       const myAssignSubs = submitRes.data.data || [];
 
-      const enrichedQuizzes = allQuizzes.map(q => ({
+      // Enrich quiz với trạng thái đã làm
+      setQuizzes(allQuizzes.map(q => ({
         ...q,
-        completed: myQuizSubs.some(s => Number(s.quizId || s.QuizID) === Number(q.id)),
-        score: myQuizSubs.find(s => Number(s.quizId || s.QuizID) === Number(q.id))?.score
-               ?? myQuizSubs.find(s => Number(s.quizId || s.QuizID) === Number(q.id))?.Diem
-               ?? null,
-      }));
+        completed: myQuizSubs.some(s =>
+          Number(s.quizId || s.QuizID) === Number(q.id)
+        ),
+        score: myQuizSubs.find(s =>
+          Number(s.quizId || s.QuizID) === Number(q.id)
+        )?.score ?? null,
+      })));
 
-      const enrichedAssigns = allAssigns.map(a => ({
+      // Enrich assignment với trạng thái đã nộp
+      setAssignments(allAssigns.map(a => ({
         ...a,
-        submitted: myAssignSubs.some(s => Number(s.assignId || s.AssignID) === Number(a.id)),
-        score:   myAssignSubs.find(s => Number(s.assignId || s.AssignID) === Number(a.id))?.score
-               ?? myAssignSubs.find(s => Number(s.assignId || s.AssignID) === Number(a.id))?.Diem
-               ?? null,
-        comment: myAssignSubs.find(s => Number(s.assignId || s.AssignID) === Number(a.id))?.comment
-               ?? myAssignSubs.find(s => Number(s.assignId || s.AssignID) === Number(a.id))?.NhanXet
-               ?? null,
-      }));
-
-      setQuizzes(enrichedQuizzes);
-      setAssignments(enrichedAssigns);
-    } catch(e) {
+        submitted: myAssignSubs.some(s =>
+          Number(s.assignId || s.AssignID) === Number(a.id)
+        ),
+        score: myAssignSubs.find(s =>
+          Number(s.assignId || s.AssignID) === Number(a.id)
+        )?.score ?? null,
+        comment: myAssignSubs.find(s =>
+          Number(s.assignId || s.AssignID) === Number(a.id)
+        )?.comment ?? null,
+      })));
+    } catch (e) {
       console.error(e);
     } finally {
       setLoading(false);
@@ -88,9 +91,9 @@ export default function StudentExercises() {
       const mySubmits = r.data.data || [];
       setAssignments(prev => prev.map(a => ({
         ...a,
-        submitted: mySubmits.some(s => Number(s.assignId) === Number(a.id)),
-        score:     mySubmits.find(s => Number(s.assignId) === Number(a.id))?.score ?? null,
-        comment:   mySubmits.find(s => Number(s.assignId) === Number(a.id))?.comment ?? null,
+        submitted: mySubmits.some(s => Number(s.AssignId) === Number(a.id)),
+        score:     mySubmits.find(s => Number(s.AssignId) === Number(a.id))?.score ?? null,
+        comment:   mySubmits.find(s => Number(s.AssignId) === Number(a.id))?.comment ?? null,
       })));
     } catch { toast.error("Không thể nộp bài"); }
     finally { setSubmitting(false); }

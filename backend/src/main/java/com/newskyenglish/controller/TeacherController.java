@@ -3,10 +3,12 @@ package com.newskyenglish.controller;
 import com.newskyenglish.model.*;
 import com.newskyenglish.repository.*;
 import com.newskyenglish.security.JwtUtil;
-import lombok.*;
-import org.springframework.http.ResponseEntity;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/teacher")
@@ -14,50 +16,67 @@ import java.util.List;
 @CrossOrigin(origins = {"http://localhost:3000","https://newskyenglish.vercel.app"})
 public class TeacherController {
 
-    private final ClassRoomRepository classRepo;
+    private final ClassRoomRepository  classRepo;
     private final EnrollmentRepository enrollRepo;
     private final AssignmentRepository assignRepo;
     private final JwtUtil jwtUtil;
 
-    // Lấy các lớp được phân công
+    // Lấy lớp của teacher (dùng teacherId trong class)
     @GetMapping("/classes")
-    public ResponseEntity<?> getMyClasses(@RequestHeader("Authorization") String authHeader) {
-        String token = authHeader.substring(7);
-        Long teacherId = jwtUtil.extractUserId(token);
-
-        List<ClassRoom> myClasses = classRepo.findByTeacherId(teacherId.intValue());
-
-        List<ClassRoom> classes = classRepo.findAll().stream()
-            .filter(c -> myClasses.stream().anyMatch(mc -> mc.getId().equals(c.getId())))
-            .toList();
-
+    public ResponseEntity<?> getMyClasses(
+            @RequestHeader("Authorization") String auth) {
+        Long teacherId = jwtUtil.extractUserId(auth.substring(7));
+        List<ClassRoom> classes = classRepo.findByTeacherId(teacherId);
         return ResponseEntity.ok(ApiResponse.success(classes));
     }
 
-    // Xem học viên trong lớp
+    // Lấy học viên của 1 lớp
     @GetMapping("/classes/{classId}/students")
     public ResponseEntity<?> getStudents(@PathVariable Long classId) {
-        List<Enrollment> enrollments = enrollRepo.findByClassId(classId);
-        return ResponseEntity.ok(ApiResponse.success(enrollments));
+        return ResponseEntity.ok(ApiResponse.success(
+            enrollRepo.findByClassId(classId)
+        ));
     }
 
-    // Tạo assignment trong lớp của mình (teacher only)
+    // Lấy assignments của lớp mình phụ trách
+    @GetMapping("/assignments")
+    public ResponseEntity<?> getMyAssignments(
+            @RequestHeader("Authorization") String auth) {
+        Long teacherId = jwtUtil.extractUserId(auth.substring(7));
+        List<ClassRoom> myClasses = classRepo.findByTeacherId(teacherId);
+        List<Long> classIds = myClasses.stream()
+            .map(ClassRoom::getId).collect(Collectors.toList());
+
+        List<Assignment> all = new ArrayList<>();
+        for (Long cid : classIds) {
+            all.addAll(assignRepo.findByClassId(cid));
+        }
+        // Dedup
+        List<Assignment> unique = all.stream()
+            .collect(Collectors.collectingAndThen(
+                Collectors.toMap(Assignment::getId, a -> a, (a, b) -> a),
+                m -> new ArrayList<>(m.values())
+            ));
+        return ResponseEntity.ok(ApiResponse.success(unique));
+    }
+
+    // Tạo assignment cho lớp của mình
     @PostMapping("/assignments")
     public ResponseEntity<?> createAssignment(
             @RequestBody Assignment req,
-            @RequestHeader("Authorization") String authHeader) {
+            @RequestHeader("Authorization") String auth) {
+        Long teacherId = jwtUtil.extractUserId(auth.substring(7));
 
-        // Teacher chỉ được tạo assignment, không tạo quiz
-        Assignment saved = assignRepo.save(req);
-        return ResponseEntity.ok(ApiResponse.success(saved, "Tạo bài tập thành công"));
-    }
-
-    // Xem assignments của lớp
-    @GetMapping("/classes/{classId}/assignments")
-    public ResponseEntity<?> getClassAssignments(@PathVariable Long classId) {
-        // Lấy lessons của class → assignments của lessons
-        return ResponseEntity.ok(ApiResponse.success(
-            assignRepo.findAll() // TODO: filter by classId
-        ));
+        // Kiểm tra lớp có phải của teacher không
+        if (req.getClassId() != null) {
+            boolean owns = classRepo.findByTeacherId(teacherId)
+                .stream().anyMatch(c -> c.getId().equals(req.getClassId()));
+            if (!owns) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(ApiResponse.error("Bạn không có quyền tạo bài tập cho lớp này"));
+            }
+        }
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .body(ApiResponse.success(assignRepo.save(req), "Tạo bài tập thành công"));
     }
 }

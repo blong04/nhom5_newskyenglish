@@ -10,15 +10,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/courses")
 @RequiredArgsConstructor
-@CrossOrigin(origins = {"http://localhost:3000", "https://newskyenglish.vercel.app"})
+@CrossOrigin(origins = {"http://localhost:3000","https://newskyenglish.vercel.app"})
 public class CourseController {
 
-    private final CourseRepository courseRepo;
-    private final ClassRoomRepository classRepo; // ← thêm vào
-
-    // ==========================================
-    // COURSES CRUD
-    // ==========================================
+    private final CourseRepository    courseRepo;
+    private final ClassRoomRepository classRepo;
 
     @GetMapping
     public ResponseEntity<?> getAll() {
@@ -32,11 +28,17 @@ public class CourseController {
             .orElse(ResponseEntity.notFound().build());
     }
 
+    // Lấy danh sách lớp của khóa học
+    @GetMapping("/{id}/classes")
+    public ResponseEntity<?> getCourseClasses(@PathVariable Long id) {
+        List<ClassRoom> classes = classRepo.findByCourseId(id);
+        return ResponseEntity.ok(ApiResponse.success(classes));
+    }
+
     @PostMapping
     public ResponseEntity<?> create(@RequestBody Course course) {
-        Course saved = courseRepo.save(course);
         return ResponseEntity.status(HttpStatus.CREATED)
-            .body(ApiResponse.success(saved, "Tạo khóa học thành công"));
+            .body(ApiResponse.success(courseRepo.save(course), "Tạo khóa học thành công"));
     }
 
     @PutMapping("/{id}")
@@ -48,7 +50,8 @@ public class CourseController {
             if (req.getLevel()       != null) c.setLevel(req.getLevel());
             if (req.getExamType()    != null) c.setExamType(req.getExamType());
             if (req.getStatus()      != null) c.setStatus(req.getStatus());
-            return ResponseEntity.ok(ApiResponse.success(courseRepo.save(c), "Cập nhật thành công"));
+            return ResponseEntity.ok(
+                ApiResponse.success(courseRepo.save(c), "Cập nhật thành công"));
         }).orElse(ResponseEntity.notFound().build());
     }
 
@@ -56,15 +59,5 @@ public class CourseController {
     public ResponseEntity<?> delete(@PathVariable Long id) {
         courseRepo.deleteById(id);
         return ResponseEntity.ok(ApiResponse.success(null, "Xóa thành công"));
-    }
-
-    // ==========================================
-    // CLASSES của khóa học
-    // ==========================================
-
-    @GetMapping("/{id}/classes")
-    public ResponseEntity<?> getCourseClasses(@PathVariable Long id) {
-        List<ClassRoom> classes = classRepo.findByCourseId(id);
-        return ResponseEntity.ok(ApiResponse.success(classes));
     }
 }

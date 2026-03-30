@@ -41,7 +41,7 @@ export default function StudentCourses() {
       const [cRes, eRes, clsRes] = await Promise.all([
         api.get("/courses"),
         api.get("/student/enrollments"),
-        api.get("/admin/classes"),   // ← fetch 1 lần lấy tất cả
+        api.get("/classes"),
       ]);
       setCourses((cRes.data.data || []).filter(c => c.status === "active"));
       setEnrollments(eRes.data.data   || []);

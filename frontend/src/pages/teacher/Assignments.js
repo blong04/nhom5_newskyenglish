@@ -30,51 +30,16 @@ export default function TeacherAssignments() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [clsRes, courseRes, userRes, aRes, qRes] = await Promise.all([
-        api.get("/admin/classes"),
-        api.get("/courses"),
+      const [aRes, qRes, uRes] = await Promise.all([
+        // Dùng endpoint teacher thay vì /assignments trực tiếp
+        api.get("/teacher/assignments"),
+        api.get("/quizzes").catch(() => ({ data: { data: [] } })),
         api.get("/users"),
-        api.get("/assignments").catch(() => ({ data:{ data:[] } })),
-        api.get("/quizzes").catch(()    => ({ data:{ data:[] } })),
       ]);
-
-      const allClasses = clsRes.data.data   || [];
-      const allCourses = courseRes.data.data || [];
-      const myId = Number(user.id);
-
-      // Lớp của teacher
-      const myClasses = allClasses.filter(c => Number(c.teacherId) === myId);
-
-      // CourseIds của teacher
-      const myCourseIds = [...new Set(myClasses.map(c => Number(c.courseId)))];
-
-      // Lấy modules → lessons của các course đó
-      const moduleRes = await api.get("/modules").catch(() => ({ data:{ data:[] } }));
-      const allModules = moduleRes.data.data || [];
-      const myModules = allModules.filter(m => myCourseIds.includes(Number(m.courseId)));
-      const myModuleIds = myModules.map(m => m.id || m.ModuleID);
-
-      const lessonRes = await api.get("/lessons").catch(() => ({ data:{ data:[] } }));
-      const allLessons = lessonRes.data.data || [];
-      const myLessonIds = allLessons
-        .filter(l => myModuleIds.includes(Number(l.moduleId || l.ModuleID)))
-        .map(l => l.id || l.LessonID);
-
-      // Lọc assignments theo lessonId
-      const allAssigns = aRes.data.data || [];
-      const myAssigns = myLessonIds.length > 0
-        ? allAssigns.filter(a => myLessonIds.includes(Number(a.lessonId || a.LessonID)))
-        : allAssigns; // fallback: hiện tất cả nếu chưa có data
-
-      const allQuizzes = qRes.data.data || [];
-      const myQuizzes = myLessonIds.length > 0
-        ? allQuizzes.filter(q => myLessonIds.includes(Number(q.lessonId || q.LessonID)))
-        : allQuizzes;
-
-      setAssignments([...new Map(myAssigns.map(a => [a.id, a])).values()]);
-      setQuizzes([...new Map(myQuizzes.map(q => [q.id, q])).values()]);
-      setUsers(userRes.data.data || []);
-    } catch(err) {
+      setAssignments(aRes.data.data || []);
+      setQuizzes(qRes.data.data    || []);
+      setUsers(uRes.data.data      || []);
+    } catch (err) {
       console.error(err);
       toast.error("Không thể tải dữ liệu");
     } finally {

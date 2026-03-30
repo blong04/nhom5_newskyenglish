@@ -26,10 +26,17 @@ public class UserNotification {
     @Column(name = "LoaiThongBao")
     private String type;
 
+    // Tên cột DB là DaDoc (tinyint), map sang boolean
     @Column(name = "DaDoc")
     @Builder.Default
     private Boolean read = false;
 
     @Column(name = "NgayTao")
     private LocalDateTime createdAt;
+
+    @PrePersist
+    public void prePersist() {
+        if (createdAt == null) createdAt = LocalDateTime.now();
+        if (read == null) read = false;
+    }
 }

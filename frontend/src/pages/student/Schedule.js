@@ -20,7 +20,7 @@ export default function StudentSchedule() {
       try {
         const [eRes, clsRes, courseRes] = await Promise.all([
           api.get("/student/enrollments"),
-          api.get("/admin/classes"),
+          api.get("/classes"),
           api.get("/courses"),
         ]);
 

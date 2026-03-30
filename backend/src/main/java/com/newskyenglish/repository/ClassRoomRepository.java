@@ -9,5 +9,5 @@ import java.util.List;
 public interface ClassRoomRepository extends JpaRepository<ClassRoom, Long> {
     List<ClassRoom> findByCourseId(Long courseId);
     List<ClassRoom> findByStatus(ClassRoom.Status status);
-    List<ClassRoom> findByTeacherId(int teacherId);
+    List<ClassRoom> findByTeacherId(Long teacherId);
 }

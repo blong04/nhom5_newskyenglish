@@ -20,7 +20,6 @@ public class AdminController {
     private final CourseRepository courseRepo;
     private final ClassRoomRepository classRepo;
     private final EnrollmentRepository enrollRepo;
-    private final AssignmentRepository assignRepo;
 
     // ==========================================
     // ADMIN STATS
@@ -307,5 +306,9 @@ public class AdminController {
             Map.of("sent", targets.size()),
             "Đã gửi thông báo đến " + targets.size() + " người"
         ));
+    }
+    @GetMapping("/classes")
+    public ResponseEntity<?> getClassesPublic() {
+        return ResponseEntity.ok(ApiResponse.success(classRepo.findAll()));
     }
 }
