@@ -62,6 +62,11 @@ public class Assignment {
     @Column(name = "NgayCapNhat")
     private LocalDateTime updatedAt;
 
+    @Column(name = "ClassID")
+    private Long classId;
+
+    @Column(name = "Part", length = 50)
+    private String part;
     public enum AssignType { writing, speaking }
     public enum ExamType { IELTS, TOEIC, OTHER }
     public enum Status { active, inactive, closed }
