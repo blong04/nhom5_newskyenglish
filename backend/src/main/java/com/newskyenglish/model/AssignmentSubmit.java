@@ -2,7 +2,6 @@ package com.newskyenglish.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -22,15 +21,13 @@ public class AssignmentSubmit {
     @Column(name = "UserID")
     private Long userId;
 
-    @Column(name = "NoiDungBai", columnDefinition = "TEXT")
+    // Tên cột thật là NoiDung (không phải content/NoiDungBai)
+    @Column(name = "NoiDung", columnDefinition = "TEXT")
     private String content;
 
-    @Column(name = "FileDinhKem", length = 255)
+    // Tên cột thật là FileURL (không phải FileDinhKem/fileUrl)
+    @Column(name = "FileURL", length = 255)
     private String fileUrl;
-
-    @CreationTimestamp
-    @Column(name = "NgayNop")
-    private LocalDateTime submittedAt;
 
     @Column(name = "Diem", precision = 5, scale = 2)
     private BigDecimal score;
@@ -43,5 +40,22 @@ public class AssignmentSubmit {
     @Builder.Default
     private Status status = Status.submitted;
 
-    public enum Status { submitted, graded }
+    @Column(name = "NgayNop")
+    private LocalDateTime submittedAt;
+
+    @Column(name = "NgayCham")
+    private LocalDateTime gradedAt;
+
+    @Column(name = "NguoiCham")
+    private Long gradedBy;
+
+    @Column(name = "NgayCapNhat")
+    private LocalDateTime updatedAt;
+
+    @PrePersist
+    public void prePersist() {
+        if (submittedAt == null) submittedAt = LocalDateTime.now();
+    }
+
+    public enum Status { submitted, graded, late, resubmit }
 }

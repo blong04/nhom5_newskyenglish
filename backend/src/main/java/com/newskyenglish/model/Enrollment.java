@@ -2,6 +2,7 @@ package com.newskyenglish.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -32,14 +33,17 @@ public class Enrollment {
     @Column(name = "NguoiDuyet")
     private Long approvedBy;
 
+    @Column(name = "Paid")
+    @Builder.Default
+    private Boolean paid = false;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "TrangThai")
     @Builder.Default
     private Status status = Status.pending;
 
-    @Column(name = "TienDo")
-    @Builder.Default
-    private Double progress = 0.0;
+    @Column(name = "TienDo", precision = 5, scale = 2)
+    private BigDecimal progress;
 
     @Column(name = "NgayHoanThanh")
     private LocalDateTime completedDate;

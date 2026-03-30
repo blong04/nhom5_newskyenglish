@@ -2,8 +2,6 @@ package com.newskyenglish.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -17,8 +15,8 @@ public class Assignment {
     @Column(name = "AssignID")
     private Long id;
 
-    @Column(name = "LessonID")
-    private Long lessonId;
+    @Column(name = "ClassID")
+    private Long classId;
 
     @Column(name = "TieuDe", length = 150)
     private String title;
@@ -28,46 +26,36 @@ public class Assignment {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "Loai")
-    @Builder.Default
-    private AssignType type = AssignType.writing;
+    private Type type;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "ExamType")
-    @Builder.Default
-    private ExamType examType = ExamType.OTHER;
+    private ExamType examType;
 
     @Column(name = "ExamPart", length = 50)
     private String examPart;
+
+    @Column(name = "Part", length = 50)
+    private String part;
 
     @Column(name = "HanNop")
     private LocalDateTime deadline;
 
     @Column(name = "DiemToiDa", precision = 5, scale = 2)
-    @Builder.Default
-    private BigDecimal maxScore = BigDecimal.valueOf(100);
-
-    @Column(name = "FileDinhKem", length = 255)
-    private String attachmentUrl;
+    private BigDecimal maxScore;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "TrangThai")
     @Builder.Default
     private Status status = Status.active;
 
-    @CreationTimestamp
     @Column(name = "NgayTao", updatable = false)
     private LocalDateTime createdAt;
 
-    @UpdateTimestamp
     @Column(name = "NgayCapNhat")
     private LocalDateTime updatedAt;
 
-    @Column(name = "ClassID")
-    private Long classId;
-
-    @Column(name = "Part", length = 50)
-    private String part;
-    public enum AssignType { writing, speaking }
+    public enum Type    { writing, speaking }
     public enum ExamType { IELTS, TOEIC, OTHER }
-    public enum Status { active, inactive, closed }
+    public enum Status  { active, inactive, closed }
 }

@@ -2,7 +2,6 @@ package com.newskyenglish.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -21,11 +20,11 @@ public class Submission {
     @Column(name = "UserID")
     private Long userId;
 
-    @Column(name = "DapAn", columnDefinition = "JSON")
+    @Column(name = "DapAn", columnDefinition = "TEXT")
     private String answers;
 
-    @Column(name = "Diem", precision = 5, scale = 2)
-    private BigDecimal score;
+    @Column(name = "Diem")
+    private Float score;
 
     @Column(name = "ThoiGianLam")
     private Integer timeSpent;

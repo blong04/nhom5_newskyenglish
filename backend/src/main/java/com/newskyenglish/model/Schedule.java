@@ -42,7 +42,7 @@ public class Schedule {
     @Enumerated(EnumType.STRING)
     @Column(name = "LoaiLichHoc")
     @Builder.Default
-    private Type type = Type.online;
+    private Type type = Type.offline;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "TrangThai")

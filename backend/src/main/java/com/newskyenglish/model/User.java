@@ -1,29 +1,23 @@
 package com.newskyenglish.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import lombok.*;
-
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "users")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Data @NoArgsConstructor @AllArgsConstructor @Builder
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "userid")
+    @Column(name = "UserID")        // ← thực tế là UserID không phải userid
     private Long id;
 
     @Column(name = "HoTen", length = 100)
     private String name;
 
-    @Email(message = "Email không hợp lệ")
-    @Column(name = "Email", unique = true, length = 100)
+    @Column(name = "Email", length = 100, unique = true)
     private String email;
 
     @Column(name = "MatKhau", length = 255)
@@ -35,7 +29,7 @@ public class User {
     @Column(name = "DiaChi", columnDefinition = "TEXT")
     private String address;
 
-    @Column(name = "RoleID")
+    @Column(name = "RoleID")        // ← thực tế là RoleID
     private Integer roleId;
 
     @Column(name = "AnhDaiDien", length = 255)
@@ -56,6 +50,9 @@ public class User {
     @Builder.Default
     private Status status = Status.active;
 
+    @Column(name = "IELTSScore")
+    private Double ieltsScore;
+
     @Column(name = "TOEICScore")
     private Integer toeicScore;
 
@@ -71,10 +68,5 @@ public class User {
     @Column(name = "HocVan", length = 255)
     private String education;
 
-    @Column(name = "IELTSScore")
-    private Double ieltsScore;
-
-    public enum Status {
-        active, inactive, suspended
-    }
+    public enum Status { active, inactive, suspended }
 }
