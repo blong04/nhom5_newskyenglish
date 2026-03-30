@@ -1,0 +1,97 @@
+/* TEACHER TABS */
+.teacher-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 20px;
+  background: var(--gray-100);
+  border-radius: 10px;
+  padding: 4px;
+  width: fit-content;
+}
+.ttab {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--gray-600);
+  background: transparent;
+  transition: all 0.2s;
+}
+.ttab:hover { color: var(--primary); }
+.ttab.active { background: #fff; color: var(--primary); font-weight: 600; box-shadow: var(--shadow); }
+
+/* CLASS CARDS */
+.teacher-class-card {
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  transition: all 0.2s;
+  border-left: 3px solid var(--gray-200);
+}
+.teacher-class-card:hover { border-left-color: var(--primary); transform: translateX(3px); }
+.teacher-class-card.selected { border-left-color: var(--primary); background: var(--primary-light); }
+
+.class-card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+.class-card-top h4 { font-size: 0.95rem; font-weight: 600; color: var(--gray-900); margin-bottom: 4px; }
+.class-course-name { font-size: 0.8rem; color: var(--gray-500); display: flex; align-items: center; flex-wrap: wrap; gap: 4px; }
+.class-card-meta { display: flex; gap: 16px; font-size: 0.78rem; color: var(--gray-500); flex-wrap: wrap; }
+.class-card-desc { font-size: 0.8rem; color: var(--gray-400); margin-top: 6px; }
+
+/* STUDENT ITEMS */
+.student-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--gray-100);
+}
+.student-item:last-child { border-bottom: none; }
+
+/* ASSIGNMENT CARDS */
+.assignment-card {
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  box-shadow: var(--shadow);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  border-left: 3px solid var(--primary-mid);
+}
+.assignment-card-left { flex: 1; }
+.assignment-card-left h4 { font-size: 0.95rem; font-weight: 600; color: var(--gray-900); margin: 6px 0 4px; }
+.assign-desc { font-size: 0.8rem; color: var(--gray-500); line-height: 1.5; }
+.assign-meta { display: flex; gap: 14px; font-size: 0.75rem; color: var(--gray-400); margin-top: 8px; flex-wrap: wrap; }
+.assignment-card-right { display: flex; gap: 6px; flex-shrink: 0; flex-direction: column; align-items: flex-end; }
+
+/* SUBMISSION ITEMS */
+.submission-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--gray-100);
+}
+.submission-item:last-child { border-bottom: none; }
+
+/* NOTIFICATIONS */
+.notif-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  background: var(--gray-50);
+  position: relative;
+  transition: background 0.15s;
+}
+.notif-item:hover { background: var(--primary-light); }
+.notif-item.unread { background: #fff8f8; border-left: 3px solid var(--primary); }
+.notif-icon { font-size: 1.3rem; flex-shrink: 0; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: var(--primary-light); border-radius: 8px; }
+.notif-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--primary); flex-shrink: 0; margin-top: 6px; }
