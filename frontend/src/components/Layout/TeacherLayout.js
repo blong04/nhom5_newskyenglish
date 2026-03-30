@@ -1,26 +1,51 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import ProfileModal from "../shared/ProfileModal";
 import toast from "react-hot-toast";
 import "./Layout.css";
 
 const navItems = [
-  { to: "/teacher", icon: "⊞", label: "Dashboard", end: true },
+  { to: "/teacher", icon: "📊", label: "Dashboard", end: true },
   { to: "/teacher/classes", icon: "🏫", label: "Lớp của tôi" },
-  { to: "/teacher/assignments", icon: "📋", label: "Bài tập" },
   { to: "/teacher/students", icon: "👨‍🎓", label: "Học viên" },
+  { to: "/teacher/assignments", icon: "📋", label: "Bài tập" },
+  { to: "/teacher/notifications", icon: "🔔", label: "Thông báo" },
 ];
 
 export default function TeacherLayout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
+  const [profileTab, setProfileTab] = useState("info");
+  const [dropdown, setDropdown] = useState(false);
+  const dropRef = useRef(null);
 
-  const handleLogout = () => { logout(); toast.success("Đã đăng xuất"); navigate("/login"); };
+  useEffect(() => {
+    const handler = (e) => {
+      if (dropRef.current && !dropRef.current.contains(e.target))
+        setDropdown(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const handleLogout = () => {
+    logout();
+    toast.success("Đã đăng xuất");
+    navigate("/login");
+  };
+
+  const openProfile = (tab = "info") => {
+    setProfileTab(tab);
+    setShowProfile(true);
+    setDropdown(false);
+  };
 
   return (
     <div className={`layout ${collapsed ? "collapsed" : ""}`}>
-      <aside className="sidebar sidebar-teacher">
+      <aside className="sidebar">
         <div className="sidebar-header">
           <div className="sidebar-logo">
             <span className="logo-icon">🎓</span>
@@ -30,30 +55,64 @@ export default function TeacherLayout() {
             {collapsed ? "›" : "‹"}
           </button>
         </div>
+
         <nav className="sidebar-nav">
-          {navItems.map((item) => (
+          {navItems.map(item => (
             <NavLink key={item.to} to={item.to} end={item.end}
               className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}>
               <span className="nav-icon">{item.icon}</span>
-              {!collapsed && <span className="nav-label">{item.label}</span>}
+              {!collapsed && <span>{item.label}</span>}
             </NavLink>
           ))}
         </nav>
-        <div className="sidebar-footer">
-          <div className="user-info">
-            <div className="user-avatar">{user?.name?.charAt(0).toUpperCase()}</div>
-            {!collapsed && <div className="user-details"><p className="user-name">{user?.name}</p><p className="user-role">Giáo viên</p></div>}
-          </div>
-          <button className="logout-btn" onClick={handleLogout}>🚪</button>
-        </div>
       </aside>
+
       <div className="main-wrapper">
         <header className="top-header">
           <h2 className="page-heading">Giáo viên</h2>
-          <div className="header-right"><span className="welcome-text">Xin chào, {user?.name}</span></div>
+          <div className="header-right">
+            <span className="welcome-text">{user?.name}</span>
+            <div className="avatar-dropdown-wrap" ref={dropRef}>
+              <div className="header-avatar" onClick={() => setDropdown(d => !d)}>
+                {user?.avatarUrl
+                  ? <img src={user.avatarUrl} alt="" />
+                  : <span>{user?.name?.charAt(0)?.toUpperCase()}</span>}
+              </div>
+              {dropdown && (
+                <div className="avatar-dropdown">
+                  <div className="dropdown-user-info">
+                    <div className="dropdown-avatar">
+                      {user?.avatarUrl
+                        ? <img src={user.avatarUrl} alt="" />
+                        : user?.name?.charAt(0)?.toUpperCase()}
+                    </div>
+                    <div>
+                      <p className="dropdown-name">{user?.name}</p>
+                      <p className="dropdown-role">Giáo viên</p>
+                    </div>
+                  </div>
+                  <div className="dropdown-divider" />
+                  <button className="dropdown-item" onClick={() => openProfile("info")}>
+                    👤 Thông tin cá nhân
+                  </button>
+                  <button className="dropdown-item" onClick={() => openProfile("password")}>
+                    🔒 Đổi mật khẩu
+                  </button>
+                  <div className="dropdown-divider" />
+                  <button className="dropdown-item danger" onClick={handleLogout}>
+                    🚪 Đăng xuất
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
         </header>
         <main className="content-area"><Outlet /></main>
       </div>
+
+      {showProfile && (
+        <ProfileModal initialTab={profileTab} onClose={() => setShowProfile(false)} />
+      )}
     </div>
   );
 }
