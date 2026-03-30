@@ -9,4 +9,6 @@ import java.util.List;
 public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
     List<Assignment> findByLessonId(Long lessonId);
     List<Assignment> findByExamType(Assignment.ExamType examType);
+    List<Assignment> findByClassId(Long classId);
+    List<Assignment> findByClassIdAndExamType(Long classId, Assignment.ExamType examType);
 }
