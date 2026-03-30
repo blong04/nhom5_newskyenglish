@@ -15,7 +15,6 @@ import java.util.List;
 public class TeacherController {
 
     private final ClassRoomRepository classRepo;
-    private final CourseRepository courseRepo;
     private final EnrollmentRepository enrollRepo;
     private final AssignmentRepository assignRepo;
     private final JwtUtil jwtUtil;
@@ -26,12 +25,10 @@ public class TeacherController {
         String token = authHeader.substring(7);
         Long teacherId = jwtUtil.extractUserId(token);
 
-        // Lấy courses của teacher này, rồi lấy classes của courses đó
-        List<Course> myCourses = courseRepo.findByTeacherId(teacherId.intValue());
-        List<Long> courseIds = myCourses.stream().map(Course::getId).toList();
+        List<ClassRoom> myClasses = classRepo.findByTeacherId(teacherId.intValue());
 
         List<ClassRoom> classes = classRepo.findAll().stream()
-            .filter(c -> courseIds.contains(c.getCourseId()))
+            .filter(c -> myClasses.stream().anyMatch(mc -> mc.getId().equals(c.getId())))
             .toList();
 
         return ResponseEntity.ok(ApiResponse.success(classes));
