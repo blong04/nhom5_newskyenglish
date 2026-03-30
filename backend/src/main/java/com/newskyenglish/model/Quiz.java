@@ -48,6 +48,8 @@ public class Quiz {
     @Column(name = "ThoiGianGioiHan")
     private Integer timeLimit;
 
+    @Column(name = "ClassID")
+    private Long classId;
     public enum QuizType { mcq, writing, speaking }
     public enum ExamType { IELTS, TOEIC, OTHER }
 }
