@@ -2,54 +2,59 @@ package com.newskyenglish.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "quizzes")
+@Table(name = "classes")
 @Data @NoArgsConstructor @AllArgsConstructor @Builder
-public class Quiz {
+public class ClassRoom {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "QuizID")
+    @Column(name = "ClassID")
     private Long id;
 
-    @Column(name = "LessonID")
-    private Long lessonId;
+    @Column(name = "CourseID")
+    private Long courseId;
 
-    @Column(name = "TieuDe", length = 150)
-    private String title;
+    @Column(name = "TenLop", length = 255)
+    private String name;
+
+    @Column(name = "TeacherID")
+    private Long teacherId;
+
+    @Column(name = "MoTa", columnDefinition = "TEXT")
+    private String description;
+
+    @Column(name = "SoLuongToiDa")
+    @Builder.Default
+    private Integer maxStudents = 50;
+
+    @Column(name = "SoLuongHienTai")
+    @Builder.Default
+    private Integer currentStudents = 0;
+
+    @Column(name = "NgayBatDau")
+    private LocalDate startDate;
+
+    @Column(name = "NgayKetThuc")
+    private LocalDate endDate;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "Loai")
+    @Column(name = "TrangThai")
     @Builder.Default
-    private QuizType type = QuizType.mcq;
+    private Status status = Status.pending;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "exam_type")
-    @Builder.Default
-    private ExamType examType = ExamType.OTHER;
+    @CreationTimestamp
+    @Column(name = "NgayTao", updatable = false)
+    private LocalDateTime createdAt;
 
-    // IELTS Part: Reading/Listening/Writing/Speaking
-    // TOEIC Part: Part1~Part7
-    @Column(name = "exam_part", length = 50)
-    private String examPart;
+    @UpdateTimestamp
+    @Column(name = "NgayCapNhat")
+    private LocalDateTime updatedAt;
 
-    // Passage text cho IELTS Reading / TOEIC Reading
-    @Column(name = "passage_text", columnDefinition = "LONGTEXT")
-    private String passageText;
-
-    // Audio URL cho IELTS Listening / TOEIC Listening
-    @Column(name = "audio_url", length = 255)
-    private String audioUrl;
-
-    @Column(name = "instructions", columnDefinition = "TEXT")
-    private String instructions;
-
-    @Column(name = "ThoiGianGioiHan")
-    private Integer timeLimit;
-
-    @Column(name = "ClassID")
-    private Long classId;
-    public enum QuizType { mcq, writing, speaking }
-    public enum ExamType { IELTS, TOEIC, OTHER }
+    public enum Status { pending, active, completed, cancelled }
 }
