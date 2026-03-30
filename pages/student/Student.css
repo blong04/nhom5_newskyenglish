@@ -1,0 +1,193 @@
+/* QUIZ PAGE */
+.quiz-page { max-width: 900px; margin: 0 auto; animation: fadeIn 0.3s ease; }
+
+.quiz-header {
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  box-shadow: var(--shadow);
+  margin-bottom: 16px;
+  position: sticky; top: 64px; z-index: 40;
+}
+.quiz-info h2 { font-size: 1.1rem; font-weight: 700; margin: 6px 0 2px; }
+.quiz-info p { font-size: 0.82rem; color: var(--gray-500); }
+
+.quiz-timer { display: flex; align-items: center; gap: 8px; font-size: 1rem; font-weight: 700; }
+.timer-display { font-size: 1.5rem; font-variant-numeric: tabular-nums; }
+
+.quiz-instructions {
+  background: #fefce8;
+  border: 1px solid #fde68a;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 0.875rem;
+  margin-bottom: 16px;
+}
+
+.quiz-audio {
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+}
+
+.quiz-passage {
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  box-shadow: var(--shadow);
+  margin-bottom: 20px;
+}
+.quiz-passage h4 { font-size: 0.95rem; font-weight: 600; margin-bottom: 12px; color: var(--gray-700); }
+.passage-text {
+  font-family: Georgia, serif;
+  font-size: 0.95rem;
+  line-height: 1.9;
+  color: var(--gray-800);
+  white-space: pre-wrap;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.questions-section { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+
+.question-group-block {
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+}
+.group-passage { background: var(--gray-50); border-radius: 8px; padding: 14px; margin-bottom: 14px; font-size: 0.9rem; line-height: 1.8; }
+.group-instructions { font-size: 0.82rem; color: var(--gray-500); font-style: italic; margin-bottom: 12px; }
+
+.question-item {
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  box-shadow: var(--shadow);
+  border-left: 3px solid var(--gray-200);
+  transition: border-color 0.2s;
+}
+.question-item:has(input:checked) { border-left-color: var(--primary); }
+
+.question-content { font-size: 0.95rem; font-weight: 500; margin-bottom: 14px; color: var(--gray-800); line-height: 1.6; }
+.q-num { color: var(--primary); font-weight: 700; margin-right: 6px; }
+
+.question-image { max-width: 100%; border-radius: 8px; margin-bottom: 14px; }
+
+.options-list { display: flex; flex-direction: column; gap: 8px; }
+.option-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border: 1.5px solid var(--gray-200);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.15s;
+}
+.option-item:hover { border-color: var(--primary); background: var(--primary-light); }
+.option-item.selected { border-color: var(--primary); background: var(--primary-light); font-weight: 500; }
+.option-item input { display: none; }
+.option-letter {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: var(--gray-100);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.78rem; font-weight: 700;
+  flex-shrink: 0;
+}
+.option-item.selected .option-letter { background: var(--primary); color: #fff; }
+
+.fill-blank-input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid var(--gray-200);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.fill-blank-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+
+.writing-area {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid var(--gray-200);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  resize: vertical;
+  outline: none;
+  line-height: 1.7;
+}
+.writing-area:focus { border-color: var(--primary); }
+
+.quiz-footer {
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: var(--shadow);
+  position: sticky;
+  bottom: 0;
+}
+
+/* RESULT */
+.quiz-result { display: flex; align-items: center; justify-content: center; min-height: 60vh; }
+.result-card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 40px 48px;
+  text-align: center;
+  box-shadow: var(--shadow-lg);
+  max-width: 400px;
+  width: 100%;
+}
+.result-icon { font-size: 3rem; margin-bottom: 16px; }
+.result-card h2 { font-size: 1rem; color: var(--gray-500); margin-bottom: 8px; }
+.result-card h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 20px; color: var(--gray-800); }
+.result-score { display: flex; align-items: baseline; justify-content: center; gap: 4px; margin-bottom: 8px; }
+.score-big { font-size: 4rem; font-weight: 800; color: var(--primary); }
+.score-label { font-size: 1.5rem; color: var(--gray-400); }
+.result-band { background: var(--primary-light); border-radius: 10px; padding: 12px; margin: 16px 0; font-size: 0.95rem; }
+
+/* STUDENT COURSES */
+.courses-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+.course-card-student {
+  background: #fff;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: all 0.2s;
+  border: 1.5px solid var(--gray-200);
+}
+.course-card-student:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--primary); }
+.course-card-header { padding: 20px; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #fff; }
+.course-card-body { padding: 16px 20px; }
+.course-card-footer { padding: 12px 20px; border-top: 1px solid var(--gray-100); display: flex; justify-content: space-between; align-items: center; }
+/* STICKY SEARCH BAR */
+.courses-sticky-bar {
+  position: sticky;
+  top: var(--header-height);
+  z-index: 40;
+  background: var(--gray-50);
+  padding: 12px 0;
+  margin-bottom: 4px;
+  border-bottom: 1px solid var(--gray-200);
+}
+.courses-sticky-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
