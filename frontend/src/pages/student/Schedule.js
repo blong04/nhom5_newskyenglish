@@ -141,7 +141,6 @@ export default function StudentSchedule() {
                 const examType   = course?.examType || e.examType   || "";
                 const startDate  = cls?.startDate || e.startDate;
                 const endDate    = cls?.endDate   || e.endDate;
-                const progress   = e.progress     || 0;
 
                 return (
                   <div key={e.id} style={{
@@ -282,6 +281,11 @@ export default function StudentSchedule() {
                     <span>
                       ⏰ {startT?.toString().slice(0, 5)} – {endT?.toString().slice(0, 5)}
                     </span>
+                  </div>
+                  <div style={{
+                    display: "flex", gap: 14, fontSize: "0.75rem",
+                    color: "var(--gray-500)", marginTop: 6, flexWrap: "wrap"
+                  }}>
                     <span>📍 {loc}</span>
                   </div>
                 </div>

@@ -140,10 +140,10 @@ export default function TeacherAssignments() {
       {/* Tabs */}
       <div className="teacher-tabs">
         <button className={`ttab ${tab==="assignments"?"active":""}`} onClick={() => setTab("assignments")}>
-          📋 Bài tập ({assignments.length})
+          📋 Bài tập
         </button>
         <button className={`ttab ${tab==="quizzes"?"active":""}`} onClick={() => setTab("quizzes")}>
-          📝 Bài kiểm tra ({quizzes.length})
+          📝 Bài kiểm tra
         </button>
       </div>
 

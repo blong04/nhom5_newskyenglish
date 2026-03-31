@@ -400,7 +400,7 @@ export default function StudentCourses() {
                   }
                   setEnrollStep(2);
                 }}>
-                Tiếp theo →
+                Tiếp theo
               </button>
             </div>
           </div>

@@ -104,12 +104,12 @@ export default function StudentResults() {
         <button
           className={`filter-tab-btn ${tab === "assignments" ? "active" : ""}`}
           onClick={() => setTab("assignments")}>
-          📋 Bài tập ({assignSubs.length})
+          📋 Bài tập
         </button>
         <button
           className={`filter-tab-btn ${tab === "quizzes" ? "active" : ""}`}
           onClick={() => setTab("quizzes")}>
-          📝 Bài kiểm tra ({quizSubs.length})
+          📝 Bài kiểm tra
         </button>
       </div>
 
