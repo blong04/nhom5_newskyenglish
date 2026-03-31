@@ -162,7 +162,6 @@ public class AdminController {
             map.put("courseId",   e.getCourseId());
             map.put("classId",    e.getClassId());
             map.put("status",     e.getStatus());
-            map.put("progress",   e.getProgress());
             map.put("enrollDate", e.getEnrollDate());
             map.put("paid",       false); // default, sẽ update sau khi thêm field paid
 

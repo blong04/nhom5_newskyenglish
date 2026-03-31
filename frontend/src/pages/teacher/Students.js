@@ -137,7 +137,6 @@ export default function TeacherStudents() {
                   <th>Học viên</th>
                   <th>Lớp học</th>
                   <th>Khóa học</th>
-                  <th>Tiến độ</th>
                   <th>Trạng thái</th>
                 </tr>
               </thead>
@@ -178,16 +177,6 @@ export default function TeacherStudents() {
                             </span>
                           </>
                         ) : <span style={{ color: "var(--gray-400)" }}>—</span>}
-                      </td>
-                      <td>
-                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                          <div style={{ width: 80, height: 6, background: "var(--gray-100)", borderRadius: 3, overflow: "hidden" }}>
-                            <div style={{ height: "100%", width: `${e.progress || 0}%`, background: "var(--primary)", borderRadius: 3 }} />
-                          </div>
-                          <span style={{ fontSize: "0.78rem", color: "var(--gray-500)" }}>
-                            {e.progress || 0}%
-                          </span>
-                        </div>
                       </td>
                       <td>
                         <span className={`badge ${STATUS_BADGE[e.status] || "badge-gray"}`}>

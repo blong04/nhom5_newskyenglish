@@ -352,14 +352,6 @@ export default function AdminCourses() {
               </div>
               <div className="form-row">
                 <div className="form-group">
-                  <label>Loại chứng chỉ</label>
-                  <select value={form.examType} onChange={e => setForm({...form, examType:e.target.value})}>
-                    <option value="IELTS">IELTS</option>
-                    <option value="TOEIC">TOEIC</option>
-                    <option value="OTHER">Tiếng Anh chung</option>
-                  </select>
-                </div>
-                <div className="form-group">
                   <label>Cấp độ</label>
                   <select value={form.level} onChange={e => setForm({...form, level:e.target.value})}>
                     <option value="beginner">Cơ bản</option>

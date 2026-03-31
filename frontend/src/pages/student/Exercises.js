@@ -120,7 +120,7 @@ export default function StudentExercises() {
         <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
           {assignments.length === 0
             ? <div className="empty-state"><p>Chưa có bài tập nào</p></div>
-            : assignments.map(a => {
+            : assignments.filter(a => !a.submitted).map(a => {
               const expired = isExpired(a.deadline || a.HanNop);
               const near    = isNearDeadline(a.deadline || a.HanNop);
               const dl      = a.deadline || a.HanNop;
@@ -193,7 +193,7 @@ export default function StudentExercises() {
         <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
           {quizzes.length === 0
             ? <div className="empty-state"><p>Chưa có bài kiểm tra nào</p></div>
-            : quizzes.map(q => (
+            : quizzes.filter(q => !q.completed).map(q => (
               <div key={q.id} style={{
                 background:"#fff", borderRadius:"var(--radius)",
                 padding:"16px 18px", boxShadow:"var(--shadow)",

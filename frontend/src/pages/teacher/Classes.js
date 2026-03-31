@@ -190,10 +190,10 @@ export default function TeacherClasses() {
               <button className="btn btn-ghost btn-sm" onClick={() => setSelected(null)}>✕</button>
             </div>
             <table className="data-table">
-              <thead><tr><th>Học viên</th><th>Tiến độ</th><th>TT</th></tr></thead>
+              <thead><tr><th>Học viên</th><th>Tạng thái</th></tr></thead>
               <tbody>
                 {getApproved(selected.id).length === 0
-                  ? <tr><td colSpan={3} className="empty-state"><p>Chưa có học viên</p></td></tr>
+                  ? <tr><td colSpan={2} className="empty-state"><p>Chưa có học viên</p></td></tr>
                   : getApproved(selected.id).map(e => {
                     const u = getUser(e.userId);
                     return (
@@ -211,14 +211,6 @@ export default function TeacherClasses() {
                                 {u?.email || ""}
                               </p>
                             </div>
-                          </div>
-                        </td>
-                        <td>
-                          <div style={{ display:"flex", alignItems:"center", gap:6 }}>
-                            <div style={{ width:50, height:4, background:"var(--gray-100)", borderRadius:2, overflow:"hidden" }}>
-                              <div style={{ height:"100%", width:`${e.progress||0}%`, background:"var(--primary)" }}/>
-                            </div>
-                            <span style={{ fontSize:"0.7rem" }}>{e.progress||0}%</span>
                           </div>
                         </td>
                         <td>

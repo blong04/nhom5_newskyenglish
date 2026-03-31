@@ -41,7 +41,6 @@ public class StudentController {
             map.put("courseId",   e.getCourseId());
             map.put("classId",    e.getClassId());
             map.put("status",     e.getStatus());
-            map.put("progress",   e.getProgress());
             map.put("enrollDate", e.getEnrollDate());
             map.put("approvedDate", e.getApprovedDate());
 
@@ -92,7 +91,6 @@ public class StudentController {
             .classId(classId)
             .enrollDate(LocalDateTime.now())
             .status(paid ? Enrollment.Status.approved : Enrollment.Status.pending)
-            .progress(BigDecimal.ZERO)
             .build();
 
         enrollRepo.save(e);

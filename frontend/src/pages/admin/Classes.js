@@ -284,7 +284,6 @@ export default function AdminClasses() {
                       </div>
                       <div style={{ textAlign: "right" }}>
                         <span className={`badge ${STATUS_BADGE[e.status]}`}>{STATUS_LABEL[e.status]}</span>
-                        <p style={{ fontSize: "0.7rem", color: "var(--gray-400)", marginTop: 2 }}>{e.progress || 0}%</p>
                       </div>
                     </div>
                   );

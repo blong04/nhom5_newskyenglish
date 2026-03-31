@@ -60,6 +60,29 @@ export default function StudentSchedule() {
   const getClass  = (id) => classes.find(c => Number(c.id) === Number(id));
   const getCourse = (id) => courses.find(c => Number(c.id) === Number(id));
 
+  const getStatusByTime = (dateVal, startT, endT) => {
+  if (!dateVal) return "scheduled";
+
+  const now = new Date();
+
+  // Tạo datetime đầy đủ
+  const start = new Date(dateVal);
+  const end   = new Date(dateVal);
+
+  if (startT) {
+    const [h, m] = startT.split(":");
+    start.setHours(h, m, 0);
+  }
+
+  if (endT) {
+    const [h, m] = endT.split(":");
+    end.setHours(h, m, 0);
+  }
+
+  if (now < start) return "scheduled";
+  if (now >= start && now <= end) return "ongoing";
+  return "completed";
+};
   // Filter lịch học theo tuần/tháng
   const now          = new Date();
   const startOfWeek  = new Date(now); startOfWeek.setDate(now.getDate() - now.getDay() + 1);
@@ -161,25 +184,6 @@ export default function StudentSchedule() {
                           {endDate ? new Date(endDate).toLocaleDateString("vi-VN") : "—"}
                         </p>
                       )}
-                      {/* Progress bar */}
-                      <div>
-                        <div style={{
-                          display: "flex", justifyContent: "space-between",
-                          fontSize: "0.72rem", color: "var(--gray-500)", marginBottom: 4
-                        }}>
-                          <span>Tiến độ</span>
-                          <span>{progress}%</span>
-                        </div>
-                        <div style={{
-                          height: 5, background: "var(--gray-100)",
-                          borderRadius: 3, overflow: "hidden"
-                        }}>
-                          <div style={{
-                            height: "100%", width: `${progress}%`,
-                            background: "var(--primary)", borderRadius: 3
-                          }} />
-                        </div>
-                      </div>
                     </div>
                   </div>
                 );
@@ -210,7 +214,7 @@ export default function StudentSchedule() {
         {filteredSchedules.length === 0
           ? <div className="empty-state"><p>Không có lịch học nào</p></div>
           : filteredSchedules.map(s => {
-            const cls    = getClass(s.classId || s.ClassID);
+            const cls    = getClass(s.id || s.ID);
             const course = getCourse(cls?.courseId || cls?.CourseID);
 
             const title   = s.title    || s.TieuDe    || "";
@@ -218,7 +222,7 @@ export default function StudentSchedule() {
             const startT  = s.startTime|| s.GioBatDau || "";
             const endT    = s.endTime  || s.GioKetThuc|| "";
             const loc     = s.location || s.DiaDiem   || "Tại trung tâm";
-            const st      = s.status   || s.TrangThai || "scheduled";
+            const st = getStatusByTime(dateVal, startT, endT);
             const d       = dateVal ? new Date(dateVal) : null;
             const isToday = d?.toDateString() === now.toDateString();
 

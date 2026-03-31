@@ -319,7 +319,61 @@ export default function AdminQuizzes() {
       )}
     </div>
   );
-  {/* Modal xem chi tiết */}
+  
+  return (
+    <div className="admin-page fade-in">
+      <div className="page-header">
+        <h1>Bài kiểm tra</h1>
+        <p>Quản lý bài kiểm tra IELTS và TOEIC</p>
+      </div>
+      <div className="toolbar">
+        <div className="toolbar-left">
+          <select className="filter-select" value={filterType} onChange={e => setFilterType(e.target.value)}>
+            <option value="">Tất cả</option>
+            <option value="IELTS">IELTS</option>
+            <option value="TOEIC">TOEIC</option>
+          </select>
+        </div>
+        <button className="btn btn-primary" onClick={() => setCreating(true)}>+ Tạo bài kiểm tra</button>
+      </div>
+      <div className="table-wrapper">
+        {loading ? <div className="page-loading"><div className="spinner" /></div> : (
+          <table className="data-table">
+            <thead><tr><th>Tiêu đề</th><th>Loại</th><th>Phần</th><th>Thời gian</th><th>Thao tác</th></tr></thead>
+            <tbody>
+              {filtered.length === 0
+                ? <tr><td colSpan={6} className="empty-state"><p>Chưa có bài kiểm tra nào</p></td></tr>
+                : filtered.map(q => (
+                  <tr key={q.id}>
+                    <td style={{ fontWeight: 500 }}>{q.title}</td>
+                    <td><span className={`badge ${q.examType === "IELTS" ? "badge-blue" : "badge-green"}`}>{q.examType}</span></td>
+                    <td>{q.examPart || "—"}</td>
+                    <td>{q.timeLimit ? `${q.timeLimit} phút` : "—"}</td>
+                    <td style={{ display: "flex", gap: 4 }}>
+                      <button className="btn btn-info btn-sm"
+                        title="Xem chi tiết"
+                        onClick={() => setViewModal(q)}>
+                        👁️
+                      </button>
+                      <button className="btn btn-warning btn-sm"
+                        title="Sửa"
+                        onClick={() => setEditModal({ ...q })}>
+                        ✏️
+                      </button>
+                      <button className="btn btn-danger btn-sm"
+                        title="Xóa"
+                        onClick={() => handleDelete(q.id)}>
+                        🗑️
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        )}
+      </div>
+      {/* Modal xem chi tiết */}
 {viewModal && (
   <div className="modal-overlay" onClick={() => setViewModal(null)}>
     <div className="modal" style={{ maxWidth: 540 }} onClick={e => e.stopPropagation()}>
@@ -433,60 +487,6 @@ export default function AdminQuizzes() {
     </div>
   </div>
 )}
-  return (
-    <div className="admin-page fade-in">
-      <div className="page-header">
-        <h1>Bài kiểm tra</h1>
-        <p>Quản lý bài kiểm tra IELTS và TOEIC</p>
-      </div>
-      <div className="toolbar">
-        <div className="toolbar-left">
-          <select className="filter-select" value={filterType} onChange={e => setFilterType(e.target.value)}>
-            <option value="">Tất cả</option>
-            <option value="IELTS">IELTS</option>
-            <option value="TOEIC">TOEIC</option>
-          </select>
-        </div>
-        <button className="btn btn-primary" onClick={() => setCreating(true)}>+ Tạo bài kiểm tra</button>
-      </div>
-      <div className="table-wrapper">
-        {loading ? <div className="page-loading"><div className="spinner" /></div> : (
-          <table className="data-table">
-            <thead><tr><th>Tiêu đề</th><th>Loại</th><th>Phần</th><th>Thời gian</th><th>Câu hỏi</th><th>Thao tác</th></tr></thead>
-            <tbody>
-              {filtered.length === 0
-                ? <tr><td colSpan={6} className="empty-state"><p>Chưa có bài kiểm tra nào</p></td></tr>
-                : filtered.map(q => (
-                  <tr key={q.id}>
-                    <td style={{ fontWeight: 500 }}>{q.title}</td>
-                    <td><span className={`badge ${q.examType === "IELTS" ? "badge-blue" : "badge-green"}`}>{q.examType}</span></td>
-                    <td>{q.examPart || "—"}</td>
-                    <td>{q.timeLimit ? `${q.timeLimit} phút` : "—"}</td>
-                    <td>—</td>
-                    <td style={{ display: "flex", gap: 4 }}>
-                      <button className="btn btn-info btn-sm"
-                        title="Xem chi tiết"
-                        onClick={() => setViewModal(q)}>
-                        👁️
-                      </button>
-                      <button className="btn btn-warning btn-sm"
-                        title="Sửa"
-                        onClick={() => setEditModal({ ...q })}>
-                        ✏️
-                      </button>
-                      <button className="btn btn-danger btn-sm"
-                        title="Xóa"
-                        onClick={() => handleDelete(q.id)}>
-                        🗑️
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              }
-            </tbody>
-          </table>
-        )}
-      </div>
     </div>
   );
 }

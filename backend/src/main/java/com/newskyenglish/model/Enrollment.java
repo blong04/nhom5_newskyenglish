@@ -2,7 +2,6 @@ package com.newskyenglish.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -41,9 +40,6 @@ public class Enrollment {
     @Column(name = "TrangThai")
     @Builder.Default
     private Status status = Status.pending;
-
-    @Column(name = "TienDo", precision = 5, scale = 2)
-    private BigDecimal progress;
 
     @Column(name = "NgayHoanThanh")
     private LocalDateTime completedDate;
