@@ -153,7 +153,7 @@ export default function AdminEnrollments() {
                     : paginated.map(e => {
                       const u   = getUser(e.userId);
                       const c   = getCourse(e.courseId);
-                      const cls = getClass(e.classId);   // ← lấy từ state classes
+                      const cls = getClass(e.id);   // ← lấy từ state classes
                       return (
                         <tr key={e.id}>
                           <td>
@@ -184,7 +184,7 @@ export default function AdminEnrollments() {
                           </td>
                           <td style={{ fontSize: "0.875rem" }}>
                             {/* ← Hiện tên lớp từ state classes */}
-                            {cls?.name || (e.classId ? `ID: ${e.classId}` : "—")}
+                            {cls?.name || (e.id ? `ID: ${e.id}` : "—")}
                           </td>
                           <td style={{ fontSize: "0.78rem", color: "var(--gray-500)" }}>
                             {e.enrollDate
