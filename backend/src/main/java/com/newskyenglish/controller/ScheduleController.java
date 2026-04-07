@@ -1,47 +1,49 @@
 package com.newskyenglish.controller;
 
-import com.newskyenglish.model.*;
-import com.newskyenglish.repository.*;
+import com.newskyenglish.model.ApiResponse;
+import com.newskyenglish.model.ScheduleDTO;
+import com.newskyenglish.service.ScheduleService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.*;
-import org.springframework.web.bind.annotation.*;
-import java.util.List;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/schedules")
 @RequiredArgsConstructor
-@CrossOrigin(origins = {"http://localhost:3000","https://newskyenglish.vercel.app"})
+@CrossOrigin(origins = {"http://localhost:3000", "https://newskyenglish.vercel.app"})
 public class ScheduleController {
 
-    private final ScheduleRepository scheduleRepo;
+    private final ScheduleService scheduleService;
 
     @GetMapping
     public ResponseEntity<?> getAll() {
-        return ResponseEntity.ok(ApiResponse.success(scheduleRepo.findAll()));
+        return ResponseEntity.ok(ApiResponse.success(scheduleService.getAllSchedules()));
     }
 
     @GetMapping("/class/{classId}")
     public ResponseEntity<?> getByClass(@PathVariable Long classId) {
-        return ResponseEntity.ok(ApiResponse.success(
-            scheduleRepo.findByClassId(classId)
-        ));
+        return ResponseEntity.ok(ApiResponse.success(scheduleService.getSchedulesByClassId(classId)));
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody Schedule req) {
+    public ResponseEntity<?> create(@Valid @RequestBody ScheduleDTO.CreateRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
-            .body(ApiResponse.success(scheduleRepo.save(req), "Tạo lịch thành công"));
+                .body(ApiResponse.success(scheduleService.createSchedule(request), "Tạo lịch thành công"));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Schedule req) {
-        return scheduleRepo.findById(id).map(s -> {
-            if (req.getTitle()     != null) s.setTitle(req.getTitle());
-            if (req.getDate()      != null) s.setDate(req.getDate());
-            if (req.getStartTime() != null) s.setStartTime(req.getStartTime());
-            if (req.getEndTime()   != null) s.setEndTime(req.getEndTime());
-            if (req.getStatus()    != null) s.setStatus(req.getStatus());
-            return ResponseEntity.ok(ApiResponse.success(scheduleRepo.save(s), "Cập nhật thành công"));
-        }).orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody ScheduleDTO.UpdateRequest request) {
+        return scheduleService.updateSchedule(id, request)
+                .map(response -> ResponseEntity.ok(ApiResponse.success(response, "Cập nhật thành công")))
+                .orElse(ResponseEntity.notFound().build());
     }
 }
